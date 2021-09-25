@@ -1,4 +1,4 @@
-# My Universal React Project
+# Eat App
 
 <p>
   <!-- iOS -->
