@@ -11,6 +11,7 @@ const YELP_API_KEY = "YOUR_YELP_KEY"
 
 
 export default function Home() {
+export default function Home({navigation}) {
     const [restaurantData, setRestaurantData] = useState(localRestaurants);
     const [city, setCity] = useState("San Francisco");
     const [activeTab, setActiveTab] = useState("All");
@@ -47,7 +48,7 @@ export default function Home() {
             </View>
             <ScrollView showVerticalScrollIndicator={false}>
                 <Categories/>
-                <RestaurantItems restaurantData={restaurantData}/>
+                <RestaurantItems restaurantData={restaurantData} navigation={navigation}/>
             </ScrollView>
             <Divider width={1}/>
             <BottomTabs/>

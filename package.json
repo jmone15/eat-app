@@ -1,13 +1,19 @@
 {
   "dependencies": {
+    "@react-navigation/native": "^6.0.4",
+    "@react-navigation/stack": "^6.0.9",
     "expo": "~42.0.0",
     "react": "17.0.2",
     "react-dom": "16.13.1",
     "react-native": "0.63.2",
+    "react-native-bouncy-checkbox": "^2.1.4",
     "react-native-elements": "^3.4.2",
+    "react-native-gesture-handler": "^1.10.3",
     "react-native-google-places-autocomplete": "^2.4.1",
     "react-native-vector-icons": "^8.1.0",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "react-redux": "^7.2.5",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"
