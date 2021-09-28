@@ -2,18 +2,19 @@ import React from "react";
 import {Image, Text, View, StyleSheet, ScrollView} from "react-native";
 import {Divider} from "react-native-elements";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import {useDispatch, useSelector} from "react-redux";
 
 const foods = [
     {
         title: "Lasagna",
         description: "With butter lettuce, tomato and sauce",
-        price: "$13.50",
+        price: "€13.50",
         image: "https://www.jocooks.com/wp-content/uploads/2012/03/tandoori-chicken-1-11-500x375.jpg"
     },
     {
-        title: "Lasagna",
+        title: "Pasta",
         description: "With butter lettuce, tomato and sauce",
-        price: "$13.50",
+        price: "€13.50",
         image: "https://www.jocooks.com/wp-content/uploads/2012/03/tandoori-chicken-1-11-500x375.jpg"
     }
 ]
@@ -30,16 +31,36 @@ const styles = StyleSheet.create({
     }
 });
 
-export default function MenuItem() {
+export default function MenuItem({restaurantName}) {
+
+    const dispatch = useDispatch();
+
+    const selectItem = (item, checkboxValue) => dispatch({
+        type: "ADD_TO_CART",
+        payload: {
+            ...item,
+            restaurantName: restaurantName,
+            checkboxValue: checkboxValue,
+        },
+    });
+
+    const cartItems = useSelector((state) => state.cartReducer.selectedItems.items);
+
+    const isFoodInCart = (food, cartItems) => (Boolean(cartItems.find((item) => item.title === food.title)));
+
     return (
         <ScrollView showsVerticalScrollIndication={false}>
             {foods.map((food, index) => (
                 <View key={index}>
                     <View style={styles.menuItemStyle}>
-                        <BouncyCheckbox iconStyle={{
-                            borderColor: "lightgray",
-                            borderRadius: 0,
-                        }} fillColor="green"/>
+                        <BouncyCheckbox
+                            iconStyle={{
+                                borderColor: "lightgray",
+                                borderRadius: 0,
+                            }} fillColor="green"
+                            isChecked={isFoodInCart(food, cartItems)}
+                            onPress={(checkboxValue) => selectItem(food, checkboxValue)}
+                        />
                         <FoodInfo food={foods[0]}/>
                         <FoodImage food={foods[0]}/>
                     </View>
