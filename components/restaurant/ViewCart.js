@@ -2,9 +2,12 @@ import React, {useState} from "react";
 import {Modal, Text, TouchableOpacity, View, StyleSheet} from "react-native";
 import {useSelector} from "react-redux";
 import OrderItem from "./OrderItem";
+import firebase from "../../Firebase";
+import LottieView from "lottie-react-native";
 
-export default function ViewCart() {
+export default function ViewCart({navigation}) {
     const [modalVisible, setModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
     const {items, restaurantName} = useSelector((state) => state.cartReducer.selectedItems);
     const total = items
         .map(item => Number(
@@ -15,6 +18,22 @@ export default function ViewCart() {
         style: "currency",
         currency: "EUR",
     });
+
+    const addOrderToFirebase = () => {
+        setLoading(false);
+        const db = firebase.firestore();
+        db.collection("orders").add({
+            items: items,
+            restaurantName: restaurantName,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            setTimeout(() => {
+                setLoading(false);
+                navigation.navigate("OrderCompleted");
+            }, 2500);
+
+        });
+    }
 
     const style = StyleSheet.create({
         modalContainer: {
@@ -72,7 +91,10 @@ export default function ViewCart() {
                                 borderRadius: 30,
                                 width: 300,
                                 position: "relative"
-                            }} onPress={() => setModalVisible(false)}
+                            }} onPress={() => {
+                                addOrderToFirebase();
+                                setModalVisible(false);
+                            }}
                             >
                                 <Text style={{color: "white", fontSize: 20}}>Checkout</Text>
                                 <Text style={{
@@ -89,31 +111,6 @@ export default function ViewCart() {
             </>
         )
     };
-
-    /*const checkoutModalContent = () => {
-        return (
-            <View style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: 30,
-            }}>
-                <View style={{
-                    backgroundColor: "black",
-                    padding: 10,
-                    borderRadius: 30,
-                    width: 150,
-                    alignItems: "center",
-                }}>
-                    <TouchableOpacity onPress={() => setModalVisible(false)}>
-                        <Text style={{color: "white"}}>Checkout</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        )
-    };*/
-
-    //console.log(totalEUR);
 
     return (
         <>
@@ -149,8 +146,7 @@ export default function ViewCart() {
                                 borderRadius: 30,
                                 width: 300,
                                 position: "relative",
-                            }}
-                                          onPress={() => setModalVisible(true)}
+                            }} onPress={() => setModalVisible(true)}
                         >
                             <Text style={{color: "white", fontSize: 20, marginRight: 30}}>
                                 View Card
@@ -159,6 +155,27 @@ export default function ViewCart() {
                         </TouchableOpacity>
                     </View>
                 </View>) : (<></>)}
+            {loading ? (
+                <View
+                    style={{
+                        backgroundColor: "black",
+                        position: "absolute",
+                        opacity: 0.6,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                        width: "100%",
+                    }}>
+                    <LottieView
+                        style={{height: 200}}
+                        source={require("../../assets/animations/scanner.json")}
+                        autoPlay
+                        speed={3}
+                    />
+                </View>
+            ) : (
+                <></>
+            )}
         </>
     );
 }
